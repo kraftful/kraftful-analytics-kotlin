@@ -2,7 +2,7 @@
 
 # This script is a cli equivalent of snapshot.yml GitHub Action
 
-if [ ! -f .envx ]
+if [ ! -f .env ]
 then
     echo "File '.env' not found. Create one from '.env.example'"
 else
