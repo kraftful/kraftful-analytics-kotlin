@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.kraftful.analytics.AndroidRecordScreenPlugin
 import com.segment.analytics.kotlin.android.Analytics
 import com.segment.analytics.kotlin.core.Analytics
 
@@ -23,7 +22,6 @@ class KraftfulAnalytics(private val analytics: Analytics) {
                 trackApplicationLifecycleEvents = true
             }
             analytics.add(AndroidRecordScreenPlugin())
-            analytics.add(KraftfulSessionPlugin())
 
             val kraftfulAnalytics = KraftfulAnalytics(analytics)
 
