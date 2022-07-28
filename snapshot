@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
-source ./.env
+# This script is a cli equivalent of snapshot.yml GitHub Action
 
-./gradlew publishToSonatype
+if [ ! -f .envx ]
+then
+    echo "File '.env' not found. Create one from '.env.example'"
+else
+    source .env
+
+    ./gradlew publishToSonatype
+fi

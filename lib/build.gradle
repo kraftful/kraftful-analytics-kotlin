@@ -9,9 +9,9 @@ plugins {
 
 signing {
     useInMemoryPgpKeys(
-            rootProject.ext["signing.keyId"],
-            rootProject.ext["signing.key"],
-            rootProject.ext["signing.password"],
+            rootProject.ext.signingKeyId,
+            rootProject.ext.signingKeyBase64,
+            rootProject.ext.signingKeyPassword,
     )
 
     sign publishing.publications
@@ -22,6 +22,7 @@ android {
 
     defaultConfig {
         multiDexEnabled = true
+
         minSdk = 16
         targetSdk = 31
     }
@@ -48,9 +49,9 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                groupId = "com.kraftful.analytics.kotlin"
+                groupId = rootProject.group
                 artifactId = "kraftful-analytics"
-                version = "0.0.1"
+                version = rootProject.version
 
                 from components.release
 
@@ -66,9 +67,9 @@ afterEvaluate {
                     }
                     developers {
                         developer {
-                            id = "renat-zhilkibaev"
-                            name = "Renat Zhilkibaev"
-                            email = "renat@kraftful.com"
+                            id = "kraftful"
+                            name = "Kraftful Inc."
+                            email = "engineering@kraftful.com"
                         }
                     }
 
