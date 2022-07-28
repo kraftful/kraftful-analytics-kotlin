@@ -1,10 +1,10 @@
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    id 'maven-publish'
+    id "com.android.library"
+    id "kotlin-android"
+    id "maven-publish"
     id "org.jetbrains.kotlin.android"
-    id 'org.jetbrains.kotlin.plugin.serialization'
-    id 'signing'
+    id "org.jetbrains.kotlin.plugin.serialization"
+    id "signing"
 }
 
 signing {
@@ -22,17 +22,21 @@ android {
 
     defaultConfig {
         multiDexEnabled = true
-        minSdk = 30
+        minSdk = 16
         targetSdk = 31
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -52,26 +56,26 @@ afterEvaluate {
 
                 pom {
                     name = "kraftful-analytics"
-                    description = 'kraftful-analytics'
-                    url = 'https://github.com/kraftful/kraftful-analytics-kotlin'
+                    description = "kraftful-analytics"
+                    url = "https://github.com/kraftful/kraftful-analytics-kotlin"
                     licenses {
                         license {
-                            name = 'MIT License'
-                            url = 'https://github.com/kraftful/kraftful-analytics-kotlin/blob/main/LICENSE'
+                            name = "MIT License"
+                            url = "https://github.com/kraftful/kraftful-analytics-kotlin/blob/main/LICENSE"
                         }
                     }
                     developers {
                         developer {
-                            id = 'renat-zhilkibaev'
-                            name = 'Renat Zhilkibaev'
-                            email = 'renat@kraftful.com'
+                            id = "renat-zhilkibaev"
+                            name = "Renat Zhilkibaev"
+                            email = "renat@kraftful.com"
                         }
                     }
 
                     scm {
-                        connection = 'scm:git:github.com/kraftful/kraftful-analytics-kotlin.git'
-                        developerConnection = 'scm:git:ssh://github.com/kraftful/kraftful-analytics-kotlin.git'
-                        url = 'https://github.com/kraftful/kraftful-analytics-kotlin/tree/main'
+                        connection = "scm:git:github.com/kraftful/kraftful-analytics-kotlin.git"
+                        developerConnection = "scm:git:ssh://github.com/kraftful/kraftful-analytics-kotlin.git"
+                        url = "https://github.com/kraftful/kraftful-analytics-kotlin/tree/main"
                     }
                 }
             }
@@ -80,6 +84,8 @@ afterEvaluate {
 }
 
 dependencies {
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.2.0"
+
     implementation("com.segment.analytics.kotlin:android:1.7.0")
     implementation("androidx.multidex:multidex:2.0.1")
 
@@ -93,7 +99,7 @@ dependencies {
 }
 
 task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
+    archiveClassifier.set("sources")
     if (project.plugins.findPlugin("com.android.library")) {
         // For Android libraries
         from android.sourceSets.main.java.srcDirs

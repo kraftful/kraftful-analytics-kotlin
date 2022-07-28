@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "kraftful-analytics-kotlin"
-include ':lib'
+include ":lib"
