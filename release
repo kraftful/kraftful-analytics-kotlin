@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Makes a release in GH that triggers the release.yml GH Action.
+
+RELEASE_VER="$1"
+NEXT_VER="$2"
+CURRENT_VER=$(grep VERSION gradle.properties | awk -F= '{ print $2 }' | sed "s/-SNAPSHOT//")
+
+echo "Current version: $CURRENT_VER"
+echo "Release version: $RELEASE_VER"
+echo "Next version:    $NEXT_VER"
+
+echo "This will prepare the release $RELEASE_VER and push all changes to GitHub."
+echo "You will need to create a PR and merge it to trigger a CI job that will push the stable release to Maven Central"
+
+read -p "Are you sure you want to continue? <y/N> " prompt
+if [[ $prompt == "y" ]]; then
+  echo "Creating branch release/$RELEASE_VER"
+  git checkout -b "release/$RELEASE_VER"
+
+  echo "Setting release version in gradle.properties to $RELEASE_VER"
+  sed -i '' "s/VERSION=$CURRENT_VER/VERSION=$RELEASE_VER/" gradle.properties
+
+  echo "Committing changes"
+  git add gradle.properties
+  git commit -m "Create release $RELEASE_VER"
+
+  echo "Tagging release version $RELEASE_VER"
+  git tag -a "Version $RELEASE_VER"
+
+  echo "Setting next version in gradle.properties to $NEXT_VER"
+  sed -i '' "s/VERSION=$RELEASE_VER/VERSION=$NEXT_VER/" gradle.properties
+
+  echo "Committing changes"
+  git add gradle.properties
+  git commit -m "Prepare snapshot ${NEXT_VER}-SNAPSHOT"
+
+  echo "Pushing to GitHub"
+  git push && git push --tags
+else
+  echo "Aborting"
+  exit 1
+fi
