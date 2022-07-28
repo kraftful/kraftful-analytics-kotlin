@@ -1,0 +1,110 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'maven-publish'
+    id "org.jetbrains.kotlin.android"
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'signing'
+}
+
+signing {
+    useInMemoryPgpKeys(
+            rootProject.ext["signing.keyId"],
+            rootProject.ext["signing.key"],
+            rootProject.ext["signing.password"],
+    )
+
+    sign publishing.publications
+}
+
+android {
+    compileSdk = 31
+
+    defaultConfig {
+        multiDexEnabled = true
+        minSdk = 30
+        targetSdk = 31
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = "com.kraftful.analytics.kotlin"
+                artifactId = "kraftful-analytics"
+                version = "0.0.1"
+
+                from components.release
+
+                pom {
+                    name = "kraftful-analytics"
+                    description = 'kraftful-analytics'
+                    url = 'https://github.com/kraftful/kraftful-analytics-kotlin'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://github.com/kraftful/kraftful-analytics-kotlin/blob/main/LICENSE'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'renat-zhilkibaev'
+                            name = 'Renat Zhilkibaev'
+                            email = 'renat@kraftful.com'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:github.com/kraftful/kraftful-analytics-kotlin.git'
+                        developerConnection = 'scm:git:ssh://github.com/kraftful/kraftful-analytics-kotlin.git'
+                        url = 'https://github.com/kraftful/kraftful-analytics-kotlin/tree/main'
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation("com.segment.analytics.kotlin:android:1.7.0")
+    implementation("androidx.multidex:multidex:2.0.1")
+
+    implementation("androidx.core:core-ktx:1.8.0")
+    implementation("androidx.appcompat:appcompat:1.4.2")
+    implementation("com.google.android.material:material:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    implementation("androidx.lifecycle:lifecycle-process:2.5.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.5.0")
+}
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    if (project.plugins.findPlugin("com.android.library")) {
+        // For Android libraries
+        from android.sourceSets.main.java.srcDirs
+        from android.sourceSets.main.kotlin.srcDirs
+    } else {
+        // For pure Kotlin libraries, in case you have them
+        from sourceSets.main.java.srcDirs
+        from sourceSets.main.kotlin.srcDirs
+    }
+}
+
+artifacts {
+    archives androidSourcesJar
+}

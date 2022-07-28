@@ -31,3 +31,6 @@ scratch.sh
 # Ignore Gradle build output directory
 build
 /local.properties
+
+# Environment variables for scripts
+.env

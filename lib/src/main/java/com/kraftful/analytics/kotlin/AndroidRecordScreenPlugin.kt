@@ -1,4 +1,4 @@
-package com.kraftful.analytics
+package com.kraftful.analytics.kotlin
 
 import android.app.Activity
 import android.content.pm.PackageManager
