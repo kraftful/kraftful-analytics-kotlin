@@ -17,18 +17,24 @@ echo "You will need to create a PR and merge it to trigger a CI job that will pu
 
 read -p "Are you sure you want to continue? <y/N> " prompt
 if [[ $prompt == "y" ]]; then
+  echo "Switching to the main branch"
+  git checkout main
+
+  echo "Pulling latest changes"
+  git pull
+
   echo "Creating branch release/$RELEASE_VER"
   git checkout -b "release/$RELEASE_VER"
 
   echo "Setting release version in gradle.properties to $RELEASE_VER"
-  sed -i '' "s/VERSION=$CURRENT_VER/VERSION=$RELEASE_VER/" gradle.properties
+  sed -i '' "s/^VERSION=.*$/VERSION=$RELEASE_VER/" gradle.properties
 
   echo "Committing changes"
   git add gradle.properties
   git commit -m "Create release $RELEASE_VER"
 
   echo "Tagging release version $RELEASE_VER"
-  git tag -a "v$RELEASE_VER"
+  git tag -a "$RELEASE_VER"
 
   echo "Setting next version in gradle.properties to $NEXT_VER"
   sed -i '' "s/VERSION=$RELEASE_VER/VERSION=$NEXT_VER/" gradle.properties
@@ -38,7 +44,13 @@ if [[ $prompt == "y" ]]; then
   git commit -m "Prepare snapshot ${NEXT_VER}-SNAPSHOT"
 
   echo "Pushing to GitHub"
-  git push && git push --tags
+  git push --set-upstream origin "release/$RELEASE_VER" && git push --tags
+
+  echo "Switching back to the main branch"
+  git checkout main
+
+  echo "Pulling latest changes"
+  git pull
 else
   echo "Aborting"
   exit 1
