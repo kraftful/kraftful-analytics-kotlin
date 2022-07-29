@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-core-
       - name: Publish release to Sonatype
-        run: ./gradlew publishToSonatype -Prelease
+        run: ./gradlew publishToSonatype -Prelease closeAndReleaseSonatypeStagingRepository
         env:
           SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
           SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
