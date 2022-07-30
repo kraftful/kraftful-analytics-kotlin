@@ -8,6 +8,29 @@ RELEASE_VER="$1"
 NEXT_VER="$2"
 CURRENT_VER=$(grep VERSION gradle.properties | awk -F= '{ print $2 }' | sed "s/-SNAPSHOT//")
 
+function print_usage() {
+    echo "Usage:"
+    echo "./prepare_release RELEASE_VER NEXT_VER"
+    echo "  RELEASE_VER - the version you are releasing"
+    echo "  NEXT_VER    - the next version after the release"
+
+    echo "Example: ./prepare_release 0.0.2 0.0.3 - Will prepare a release for 0.0.2, and update the next version to 0.0.3"
+}
+
+if [ -z "$RELEASE_VER" ]; then
+  echo "RELEASE_VER is not set"
+  echo ""
+  print_usage
+  exit 1
+fi
+
+if [ -z "$NEXT_VER" ]; then
+  echo "NEXT_VER is not set"
+  echo ""
+  print_usage
+  exit 1
+fi
+
 echo "Current version: $CURRENT_VER"
 echo "Release version: $RELEASE_VER"
 echo "Next version:    $NEXT_VER"
@@ -29,12 +52,15 @@ if [[ $prompt == "y" ]]; then
   echo "Setting release version in gradle.properties to $RELEASE_VER"
   sed -i '' "s/^VERSION=.*$/VERSION=$RELEASE_VER/" gradle.properties
 
+  # Make some dummy changes so that a PR can be created in GitHub
+  sed -i '' "s/^# TIMESTAMP: .*$/# TIMESTAMP: $(date +%s)/" gradle.properties
+
   echo "Committing changes"
   git add gradle.properties
   git commit -m "Create release $RELEASE_VER"
 
   echo "Tagging release version $RELEASE_VER"
-  git tag -a "$RELEASE_VER"
+  git tag -a -m "$RELEASE_VER"
 
   echo "Setting next version in gradle.properties to $NEXT_VER"
   sed -i '' "s/VERSION=$RELEASE_VER/VERSION=$NEXT_VER/" gradle.properties
@@ -51,6 +77,10 @@ if [[ $prompt == "y" ]]; then
 
   echo "Pulling latest changes"
   git pull
+
+  echo ""
+  echo "Release $RELEASE_VER is prepared."
+  echo "Once you create a PR for branch release/$RELEASE_VER it will be pushed to Maven Central"
 else
   echo "Aborting"
   exit 1
