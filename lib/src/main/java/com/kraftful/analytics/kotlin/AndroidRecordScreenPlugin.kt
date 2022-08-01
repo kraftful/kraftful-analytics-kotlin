@@ -7,6 +7,9 @@ import com.segment.analytics.kotlin.core.platform.Plugin
 import com.segment.analytics.kotlin.android.plugins.AndroidLifecycle
 import com.segment.analytics.kotlin.core.platform.plugins.logger.*
 
+/**
+ * A plugin for Segment Analytics that tracks when a screen is displayed.
+ */
 class AndroidRecordScreenPlugin : Plugin, AndroidLifecycle {
 
     override val type: Plugin.Type = Plugin.Type.Utility
