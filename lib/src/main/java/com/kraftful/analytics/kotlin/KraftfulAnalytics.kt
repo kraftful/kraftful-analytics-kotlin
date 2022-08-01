@@ -84,8 +84,8 @@ class KraftfulAnalytics(private val analytics: Analytics) {
     fun trackAppReturn(userId: String?) {
         if (userId != null) {
             this.analytics.identify(userId)
+            this.analytics.track("Return")
         }
-        this.analytics.track("Return")
     }
 }
 
