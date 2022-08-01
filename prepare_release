@@ -60,7 +60,7 @@ if [[ $prompt == "y" ]]; then
   git commit -m "Create release $RELEASE_VER"
 
   echo "Tagging release version $RELEASE_VER"
-  git tag -a -m "$RELEASE_VER"
+  git tag -a "$RELEASE_VER" -m "$RELEASE_VER"
 
   echo "Setting next version in gradle.properties to $NEXT_VER"
   sed -i '' "s/VERSION=$RELEASE_VER/VERSION=$NEXT_VER/" gradle.properties
