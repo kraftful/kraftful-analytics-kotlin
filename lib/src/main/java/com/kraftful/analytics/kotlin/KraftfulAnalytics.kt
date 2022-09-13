@@ -6,6 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.segment.analytics.kotlin.android.Analytics
 import com.segment.analytics.kotlin.core.Analytics
+import com.segment.analytics.kotlin.core.Settings
+import com.segment.analytics.kotlin.core.manuallyEnableDestination
+import com.segment.analytics.kotlin.core.platform.Plugin
+import com.segment.analytics.kotlin.core.platform.plugins.SegmentDestination
+import kotlinx.serialization.json.*
 
 /**
  * A Kraftful Analytics client.
@@ -25,8 +30,19 @@ class KraftfulAnalytics(private val analytics: Analytics) {
         ) {
             val analytics = Analytics(writeKey, applicationContext) {
                 trackApplicationLifecycleEvents = true
+                autoAddSegmentDestination = false
+                apiHost = "analytics-ingestion.kraftful.com/"
+                cdnHost = "analytics-ingestion.kraftful.com/"
             }
             analytics.add(AndroidRecordScreenPlugin())
+            val segmentDestination = SegmentDestination()
+            segmentDestination.update(Settings(
+                integrations = buildJsonObject {
+                    put("Segment.io", true)
+                }
+            ), Plugin.UpdateType.Initial)
+            analytics.add(segmentDestination)
+            analytics.manuallyEnableDestination(segmentDestination)
 
             val kraftfulAnalytics = KraftfulAnalytics(analytics)
 
