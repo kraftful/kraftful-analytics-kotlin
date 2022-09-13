@@ -21,18 +21,20 @@ class KraftfulAnalytics(private val analytics: Analytics) {
         lateinit var singleton: KraftfulAnalytics
 
         /**
-         * Instantiates a global instance of Kraftful Analytics client accessible.
+         * Instantiates a global instance of Kraftful Analytics client
+         * accessible via [KraftfulAnalytics.singleton].
          */
         fun initialize(
             writeKey: String,
             applicationContext: Context,
-            userIdProvider: UserIdProvider? = null
+            userIdProvider: UserIdProvider? = null,
+            host: String = "analytics-ingestion.kraftful.com/"
         ) {
             val analytics = Analytics(writeKey, applicationContext) {
                 trackApplicationLifecycleEvents = true
                 autoAddSegmentDestination = false
-                apiHost = "analytics-ingestion.kraftful.com/"
-                cdnHost = "analytics-ingestion.kraftful.com/"
+                apiHost = host
+                cdnHost = host
             }
             analytics.add(AndroidRecordScreenPlugin())
             val segmentDestination = SegmentDestination()
