@@ -25,12 +25,12 @@ class KraftfulAnalytics(private val analytics: Analytics) {
          * accessible via [KraftfulAnalytics.singleton].
          */
         fun initialize(
-            writeKey: String,
+            apiKey: String,
             applicationContext: Context,
             userIdProvider: UserIdProvider? = null,
             host: String = "analytics-ingestion.kraftful.com/"
         ) {
-            val analytics = Analytics(writeKey, applicationContext) {
+            val analytics = Analytics(apiKey, applicationContext) {
                 trackApplicationLifecycleEvents = true
                 autoAddSegmentDestination = false
                 apiHost = host
