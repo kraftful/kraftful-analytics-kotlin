@@ -6,6 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.segment.analytics.kotlin.android.Analytics
 import com.segment.analytics.kotlin.core.Analytics
+import com.segment.analytics.kotlin.core.Settings
+import com.segment.analytics.kotlin.core.manuallyEnableDestination
+import com.segment.analytics.kotlin.core.platform.Plugin
+import com.segment.analytics.kotlin.core.platform.plugins.SegmentDestination
+import kotlinx.serialization.json.*
 
 /**
  * A Kraftful Analytics client.
@@ -16,17 +21,30 @@ class KraftfulAnalytics(private val analytics: Analytics) {
         lateinit var singleton: KraftfulAnalytics
 
         /**
-         * Instantiates a global instance of Kraftful Analytics client accessible.
+         * Instantiates a global instance of Kraftful Analytics client
+         * accessible via [KraftfulAnalytics.singleton].
          */
         fun initialize(
-            writeKey: String,
+            apiKey: String,
             applicationContext: Context,
-            userIdProvider: UserIdProvider? = null
+            userIdProvider: UserIdProvider? = null,
+            host: String = "analytics-ingestion.kraftful.com/"
         ) {
-            val analytics = Analytics(writeKey, applicationContext) {
+            val analytics = Analytics(apiKey, applicationContext) {
                 trackApplicationLifecycleEvents = true
+                autoAddSegmentDestination = false
+                apiHost = host
+                cdnHost = host
             }
             analytics.add(AndroidRecordScreenPlugin())
+            val segmentDestination = SegmentDestination()
+            segmentDestination.update(Settings(
+                integrations = buildJsonObject {
+                    put("Segment.io", true)
+                }
+            ), Plugin.UpdateType.Initial)
+            analytics.add(segmentDestination)
+            analytics.manuallyEnableDestination(segmentDestination)
 
             val kraftfulAnalytics = KraftfulAnalytics(analytics)
 
@@ -84,8 +102,8 @@ class KraftfulAnalytics(private val analytics: Analytics) {
     fun trackAppReturn(userId: String?) {
         if (userId != null) {
             this.analytics.identify(userId)
-            this.analytics.track("Return")
         }
+        this.analytics.track("Return")
     }
 }
 
